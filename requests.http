@@ -1,0 +1,68 @@
+### Use with the "REST Client" extension in VS Code.
+### The server must be running: npm run dev
+### Reset data anytime with: npm run seed
+
+@base = http://localhost:3000/api
+
+### ---------- S6.1 — List books (10 pts) ----------
+
+### All books (expect 5 books)
+GET {{base}}/books
+
+### Search filter (expect 1 book: "Learning JavaScript")
+GET {{base}}/books?search=java
+
+### ---------- S6.2 — Member with loans (10 pts) ----------
+
+### Member 1 with loans (expect Sok Dara with 2 loans)
+GET {{base}}/members/1
+
+### Unknown member (expect 404)
+GET {{base}}/members/999
+
+### ---------- S6.3 — Borrow report, raw SQL (15 pts) ----------
+
+### Expect on fresh seed:
+### Learning JavaScript = 2, Khmer Empire History = 1,
+### Database Design Basics = 1, Node.js in Action = 1,
+### Web Development for Beginners = 0
+GET {{base}}/reports/borrowed-books
+
+### ---------- S7.1 — Borrow a book (25 pts) ----------
+
+### Happy path (expect 201, dueDate = today + 14 days,
+### then GET /books shows book 4 copiesAvailable 2 -> 1)
+POST {{base}}/loans
+Content-Type: application/json
+
+{ "memberId": 3, "bookId": 4 }
+
+### No copies available: book 5 has 0 (expect 409)
+POST {{base}}/loans
+Content-Type: application/json
+
+{ "memberId": 1, "bookId": 5 }
+
+### Unknown member (expect 404)
+POST {{base}}/loans
+Content-Type: application/json
+
+{ "memberId": 999, "bookId": 1 }
+
+### Unknown book (expect 404)
+POST {{base}}/loans
+Content-Type: application/json
+
+{ "memberId": 1, "bookId": 999 }
+
+### ---------- S7.2 — Return a loan (10 pts) ----------
+
+### Happy path: loan 1 is BORROWED (expect 200, status RETURNED,
+### returnDate set, then GET /books shows book 1 copies 2 -> 3)
+PUT {{base}}/loans/1/return
+
+### Return the same loan again (expect 409)
+PUT {{base}}/loans/1/return
+
+### Unknown loan (expect 404)
+PUT {{base}}/loans/999/return

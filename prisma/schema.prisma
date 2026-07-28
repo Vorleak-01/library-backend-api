@@ -1,0 +1,42 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+// Note: your editor may warn that `url` is "no longer supported" —
+// that warning comes from a newer Prisma VS Code extension and only
+// applies to Prisma 7. This project uses Prisma 6, where this is
+// correct. Ignore the warning; `npx prisma validate` confirms it.
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Member {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  phone     String?
+  createdAt DateTime @default(now())
+}
+
+model Book {
+  id              Int      @id @default(autoincrement())
+  title           String
+  author          String
+  copiesTotal     Int
+  copiesAvailable Int
+  createdAt       DateTime @default(now())
+}
+
+// ==================================================================
+// TODO — S5.2 (15 pts)
+//
+// Add the `LoanStatus` enum and the `Loan` model here.
+// All fields, types, defaults and relations are described in
+// docs/02-erd-data-dictionary.md
+//
+// Remember: a relation needs a field on BOTH sides.
+// (`npx prisma format` can add the missing side for you.)
+//
+// When done, run:  npm run migrate   then:  npm run seed
+// ==================================================================
