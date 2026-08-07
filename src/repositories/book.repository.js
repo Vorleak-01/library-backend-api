@@ -1,38 +1,60 @@
 const prisma = require('../prisma');
 
 // ==================================================================
-// TODO — S6.1 (10 pts) — List books
+// S6.1 (10 pts) — List books
 //
 // Return all books, ordered by id ascending.
 // If `search` is given, return only books whose title contains it,
-// case-insensitive. If `search` is empty, return all books.
-//
-// Use Prisma Client (prisma.book...).
-// Test with: GET /api/books  and  GET /api/books?search=java
+// case-insensitive.
 // ==================================================================
+
 async function listBooks(search) {
-  throw new Error('Not implemented: listBooks');
+  return prisma.book.findMany({
+    where: search
+      ? {
+          title: {
+            contains: search,
+            mode: "insensitive",
+          },
+        }
+      : undefined,
+
+    orderBy: {
+      id: "asc",
+    },
+  });
 }
 
+
 // ==================================================================
-// TODO — S6.3 (15 pts) — Borrow report (RAW SQL REQUIRED)
+// S6.3 (15 pts) — Borrow report (RAW SQL REQUIRED)
 //
-// Return one row per book with: id, title, timesBorrowed
-// - timesBorrowed = how many loans the book has (0 if never borrowed
-//   — books with no loans must still appear!)
-// - Order by timesBorrowed descending, then id ascending.
+// Return one row per book with:
+// id, title, timesBorrowed
 //
-// You MUST use prisma.$queryRaw with SQL (JOIN + GROUP BY + COUNT).
-// Using only Prisma Client methods here gives 0 points.
+// - timesBorrowed = how many loans the book has
+// - Books with no loans must still appear
+// - Order by timesBorrowed descending, then id ascending
 //
-// Tip: table/column names are case-sensitive in PostgreSQL,
-// write them in double quotes: "Book", "Loan", "bookId"
-// Tip: COUNT() returns BIGINT — cast it: COUNT(l."id")::int
-//
-// Test with: GET /api/reports/borrowed-books
+// MUST use prisma.$queryRaw
 // ==================================================================
+
 async function getBorrowReport() {
-  throw new Error('Not implemented: getBorrowReport');
+  return prisma.$queryRaw`
+    SELECT
+      b."id",
+      b."title",
+      COUNT(l."id")::int AS "timesBorrowed"
+    FROM "Book" b
+    LEFT JOIN "Loan" l
+      ON b."id" = l."bookId"
+    GROUP BY b."id", b."title"
+    ORDER BY "timesBorrowed" DESC, b."id" ASC;
+  `;
 }
 
-module.exports = { listBooks, getBorrowReport };
+
+module.exports = {
+  listBooks,
+  getBorrowReport,
+};

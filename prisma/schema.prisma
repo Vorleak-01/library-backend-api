@@ -2,10 +2,6 @@ generator client {
   provider = "prisma-client-js"
 }
 
-// Note: your editor may warn that `url` is "no longer supported" —
-// that warning comes from a newer Prisma VS Code extension and only
-// applies to Prisma 7. This project uses Prisma 6, where this is
-// correct. Ignore the warning; `npx prisma validate` confirms it.
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
@@ -49,6 +45,7 @@ model Loan {
   member Member @relation(fields: [memberId], references: [id])
   book   Book   @relation(fields: [bookId], references: [id])
 }
+
 // ==================================================================
 // TODO — S5.2 (15 pts)
 //

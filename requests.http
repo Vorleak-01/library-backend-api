@@ -5,6 +5,7 @@
 @base = http://localhost:3000/api
 
 ### ---------- S6.1 — List books (10 pts) ----------
+GET {{base}}/books
 
 ### All books (expect 5 books)
 GET {{base}}/books
@@ -15,7 +16,7 @@ GET {{base}}/books?search=java
 ### ---------- S6.2 — Member with loans (10 pts) ----------
 
 ### Member 1 with loans (expect Sok Dara with 2 loans)
-GET {{base}}/members/1
+GET {{base}}/members/6
 
 ### Unknown member (expect 404)
 GET {{base}}/members/999
